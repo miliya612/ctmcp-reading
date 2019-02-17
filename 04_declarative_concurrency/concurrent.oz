@@ -184,3 +184,136 @@ local Xs Ys S in
    {Browse S}
 end
 
+% stream object
+
+proc {StreamObject S1 X1 ?T1}
+   case S1
+   of M|S2 then N X2 T2 in
+      {NextState M X1 N X2}
+      T1=N|T2
+      {StreamObject S2 X2 T2}
+   [] nil then T1=nil end
+end
+
+declare S0 X0 T0 in
+thread
+   {StreamObject S0 X0 T0}
+end
+
+% pipeline of 3 stream object
+
+declare S0 T0 U0 V0 in
+thread {StreamObject S0 0 T0} end
+thread {StreamObject T0 0 U0} end
+thread {StreamObject U0 0 V0} end
+
+% concurrent composition
+
+%local X1 X2 X3 ... Xn1 Xn in
+%   thread <Stmt>1 X1=unit end
+%   thread <Stmt>2 X2=X1 end
+%   thread <Stmt>3 X3=X2 end
+%   ...
+%   thread <Stmt>n Xn=Xn-1 end
+%   {Wait Xn}
+%end
+
+
+%local X1 X2 X3 ... Xn1 Xn Done in
+%   thread <Stmt>1 X1=unit end
+%   thread <Stmt>2 X2=unit end
+%   thread <Stmt>3 X3=unit end
+%   ...
+%   thread <Stmt>n Xn=unit end
+%   thread
+%      {Wait X1} {Wait X2} {Wait X3} ... {Wait Xn}
+%      Done=unit
+%   end
+%   {Wait Done}
+%end
+
+% abstract procedure
+
+proc {Barrier Ps}
+   fun {BarrierLoop Ps L}
+      case Ps of P|Pr then M in
+	 thread {P} M=L end
+	 {BarrierLoop Pr M}
+      [] nil then L
+      end
+   end
+   S={BarrierLoop Ps unit}
+in
+   {Wait S}
+end
+
+%{Barrier
+% [proc {S} <Stmt>1 end
+%  proc {S} <Stmt>2 end
+%  ...
+%  proc {S} <Stmt>n end]}
+
+% lazy stream
+
+fun lazy {Generate N}
+   N|{Generate N+1}
+end
+
+fun {Sum Xs A Limit}
+   if Limit>0 then
+      case Xs of X|Xr then
+	 {Sum Xr A+X Limit-1}
+      end
+   else A end
+end
+
+local Xs S in
+   Xs={Generate 0}     % 生産者
+   S={Sum Xs 0 150000} % 消費者
+   {Browse S}
+end
+
+% Simple bounded buffer with lazy
+
+fun {Buffer1 In N}
+   End={List.drop In N}
+   fun lazy {Loop In End}
+      case In of I|In2 then
+	 I|{Loop In2 End.2}
+      end
+   end
+in
+   {Loop In End}
+end
+
+% Optimized bounded buffer with lazy
+% 生産者と消費者の結合を緩くする
+% 消費者の要求は生産者とは無関係に満たされるべき
+% ->生産者への要求を出す部分をthread化する
+
+fun {Buffer2 In N}
+   End=thread {List.drop In N} end
+   fun lazy {Loop In End}
+      case In of I|In2 then
+	 I|{Loop In2 then End.2 end}
+      end
+   end
+in
+   {Loop In End}
+end
+
+% Read file with lazy
+
+fun {ReadListLazy FN}
+   {File.readOpen FN}
+   fun lazy {ReadNext}
+      L T I in
+      {File.readBlock I L T}
+      if I==0 then T=nil {File.readClose}
+      else T={ReadNext} end
+      L
+   end
+in
+   {ReadNext}
+end
+
