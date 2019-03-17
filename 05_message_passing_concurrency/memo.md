@@ -60,7 +60,7 @@
 - **値可変格納域**
   - 宣言的モデルの実行状態を拡張したもの
 
-![IMG_0002.JPG](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-1.png)
+![5-1:The message-passing concurrent model](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-1.png)
 
 #### 実行状態の拡張
 
@@ -173,7 +173,8 @@
       - requestに答えうる状態か否か
 
 
-![IMG_0004.JPG](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-3.png)
+![5-3:Message diagrams of simple protocols
+](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-3.png)
 
 ### 5.3.1. RMI(遠隔メソッド起動)
 
@@ -347,7 +348,7 @@ end
 - リフト制御システムを平行プログラムとして設計する
 - model
 
-![スクリーンショット 2019-03-17 22.49.48.png](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/05-04.png)
+![5-4:Schematic overview of a building with lifts](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-4.png)
 
 - component diagram
   - 4components
@@ -359,7 +360,7 @@ end
       - Timers handle the real-time aspect of the system
 
 
-![スクリーンショット 2019-03-17 22.53.17.png](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/05-05.png)
+![5-5:Component diagram of the lift control system](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-5.png)
 
 (?: 階数をLiftに持たせない理由は何か)
 
@@ -377,7 +378,7 @@ end
     - 条件が真であれば遷移が可能
     - 遷移がメッセージを送り、状態を変える
 
-![スクリーンショット 2019-03-17 22.58.57.png](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/05-06.png)
+![5-6:Notation for state diagrams](https://github.com/miliya612/ctmcp-reading/blob/master/05_message_passing_concurrency/img/5-6.png)
 
 - メッセージの送り方
   - portに送信
